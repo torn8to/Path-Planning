@@ -31,6 +31,10 @@ class Node:
     def printPreceding(self):
         print(self.preceding)
 
+    def printInfo(self):
+        print(self)
+        print("Preceding:"+ str(self.preceding))
+        print("Children:"+ str(self.children))
 
 
 
@@ -131,4 +135,4 @@ class djikstraDriver:
 
 
 if __name__ == '__main__':
- pass
+ img = np.full((820,820,3),255,np.uint8)
