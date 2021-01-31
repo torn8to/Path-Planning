@@ -121,14 +121,12 @@ class djikstraDriver:
             currXpos = self.nodeList[i].getXPos()
             currYpos = self.nodeList[i].getYPos()
 
-
             '''checks if the endingPoint is with in the distance of the distanceparameter'''
             if self.isInRange(currXpos,currYpos):
                 self.nodeList+=[Node(self.endingX,self.endingY)]
                 self.nodeList[len(self.nodeList)-1].AttachPreceding(self.nodeList[i])
                 self.nodeList[i].attachChildren(self.nodeList[len(self.nodeList)-1])
                 return True
-        
 
             ''' is add in nodes in spaces that valid placements'''
             if self.isValid(currXpos-self.distanceParameter,currYpos):
@@ -152,13 +150,18 @@ class djikstraDriver:
         self.outerLayerEndingIndex = len(self.nodeList)
         self.iteration+=1
         return False
+    ''' draws all the nodes already checked'''
+def drawNodeList():
+    pass
 
+def drawPath():
+    pass
 
-
+def DrawEndPoint():
+    pass
 
 if __name__ == '__main__':
     driver = djikstraDriver(10,10,25,10)
     driver.nextIteration()
     driver.nextIteration()
     driver.nextIteration()
-\
