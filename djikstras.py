@@ -1,10 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 import cv2 as cv
-import sys
 '''
+obstacles are only going to intitially going to be circular
+'''
+class Obstacles:
+    def __init__(self,XPos,Ypos, radius):
+        self.xPos = XPos
+        self.yPos = YPos
+        self.radius = radius
 
-'''
+    def inObject(self, xCoor, yCoor):
+
 
 
 class Node:
@@ -14,10 +22,12 @@ class Node:
         self.preceding = []
         self.children = []
 
-
+        '''
+        adds the pass to the list of varibles attached to the preceding
+        its use cases is to put the previous Nodes to
+        '''
     def AttachPreceding(self, preceding):
         self.preceding+= [preceding]
-
 
     def AttachChildren(self, child):
         self.children += [child]
@@ -28,6 +38,12 @@ class Node:
     def getYPos(self):
         return self.yPos
 
+    def getPreceding(self):
+        return self.preceding
+
+    def getChildren(self):
+        return self.children
+
     def printPreceding(self):
         print(self.preceding)
 
@@ -37,6 +53,10 @@ class Node:
         print("Preceding:"+ str(self.preceding))
         print("Children:"+ str(self.children))
 
+'''
+end of the Node class
+'''
+
 
 
 ''' uses the node class to find the "shortest path"'''
@@ -44,11 +64,11 @@ class djikstraDriver:
     def __init__(self,startingX, startingY,endingX,endingY):
         ''' use Area constraints'''
         self.leftXConstraint = 0
-        self.rightXConstraint = 500
+        self.rightXConstraint = 964
         self.topYConstraint = 0
-        self.bottomYConstraint = 500
-
+        self.bottomYConstraint = 824
         #variables for starting and ending positions
+        self.destinationReached = False
         self.startingX = startingX
         self.startingY = startingY
         self.endingX = endingX
@@ -60,6 +80,29 @@ class djikstraDriver:
         self.distanceParameter = 5 #is the difference between each node point on top iteration
         self.iteration = 0
         self.minObstacleSize = self.distanceParameter+1 # the minimum size of an obbstacle that can be created
+
+
+    def setStartingX(self,x):
+        self.startingX = x
+
+
+    def setStartingY(self,y):
+        self.startingY = y
+
+    def getEndXPosition(self):
+        return self.endingX
+
+    def getEndYPosition(self):
+        return self.endingY
+
+    def getNodeList(self):
+        return self.nodeList
+
+    def returnDestinationReached(self):
+        return self.destinationReached
+
+    def getPath(self):
+        list =
 
 
         '''
@@ -97,7 +140,7 @@ class djikstraDriver:
         yCoordinate = yCoordinate - self.endingY
         return (pow(xCoordinate,2)+pow(yCoordinate,2))<=(pow(self.distanceParameter,2))
 
-        ''' prints all out the list of nodes used as a debug tool'''
+    ''' prints all out the list of nodes used as a debug tool'''
     def printNodeList(self):
         for i in self.nodeList:
             i.printInfo()
@@ -126,7 +169,8 @@ class djikstraDriver:
                 self.nodeList+=[Node(self.endingX,self.endingY)]
                 self.nodeList[len(self.nodeList)-1].AttachPreceding(self.nodeList[i])
                 self.nodeList[i].attachChildren(self.nodeList[len(self.nodeList)-1])
-                return True
+                self.destinationReached = True
+                break
 
             ''' is add in nodes in spaces that valid placements'''
             if self.isValid(currXpos-self.distanceParameter,currYpos):
@@ -150,18 +194,49 @@ class djikstraDriver:
         self.outerLayerEndingIndex = len(self.nodeList)
         self.iteration+=1
         return False
+
+
+'''
+End of the djikstra driver class
+'''
+'''
+Global variables
+all colors are stored in BGR values because thats how opencv does it
+'''
+checkedSpotColor = (227,245,64)
+endPointColor =(227,0,200)
+returnedShortestPathColor = (255,42,0)
+driver = djikstraDriver(10,10,25,10)
+img=  np.fill((1024,1024,3),255,np.uint8)
+
+
+'''
+Functions
+'''
     ''' draws all the nodes already checked'''
 def drawNodeList():
-    pass
+    if not driver.destinationReached():
+        list = driver.getNodeList()
+        for i in list:
+            cv.rectangle(img,(i.getXpos-1,i.getYPos-1),(cv.getXPos+1, cv.getYPos+1),checkedSpotColor)
+    else:
+        drawPath()
+
 
 def drawPath():
-    pass
+    list = driver.
 
-def DrawEndPoint():
-    pass
+'''
+draws the end point
+'''
+def drawEndPoint():
+    endingX = driver.getEndXPosition()
+    endingY = driver.geEndYPosition()
+    cv.rectangle(img,(endingX-1,EndingY-1),(endingX+1,endingY+1),endPointColor)
 
 if __name__ == '__main__':
-    driver = djikstraDriver(10,10,25,10)
-    driver.nextIteration()
-    driver.nextIteration()
-    driver.nextIteration()
+    cv.namedWindow('image')
+    drawEndPoint()
+    drawNodeList()
+    while True:
+        key = cv.waitKey(20)& 0xFF
