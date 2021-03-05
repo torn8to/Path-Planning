@@ -12,6 +12,7 @@ class Obstacles:
         self.radius = radius
 
     def inObject(self, xCoor, yCoor):
+        pass
 
 
 
@@ -102,7 +103,16 @@ class djikstraDriver:
         return self.destinationReached
 
     def getPath(self):
-        list =
+        current = self.nodeList[len(nodeList)-1]
+        path = []
+        while !(currnet.getXPos() == self.startingX and current.getYPos == self.startingY);
+            path += current
+            current = current.getPreceding()
+        current = current.getPreceding()
+        path+=current
+        return path
+
+
 
 
         '''
@@ -224,7 +234,10 @@ def drawNodeList():
 
 
 def drawPath():
-    list = driver.
+    list = driver.getPath()
+    for i in list:
+        cv.rectangle(img,(i.getXpos-1,i.getYPos-1),(cv.getXPos+1, cv.getYPos+1),checkedSpotColor)
+
 
 '''
 draws the end point
