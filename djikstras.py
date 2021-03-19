@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import cv2 as cv
+
+
 '''
 obstacles are only going to intitially going to be circular
 '''
@@ -14,7 +16,9 @@ class Obstacles:
     def inObject(self, xCoor, yCoor):
         pass
 
-
+'''
+Node calss stores positional data and carries an assortment of methods both unnecsary and wack
+'''
 
 class Node:
     def __init__(self, xPos,yPos):
@@ -60,7 +64,10 @@ end of the Node class
 
 
 
-''' uses the node class to find the "shortest path"'''
+'''
+uses the node class to find the path found by the djiksta algorithim
+'''
+
 class djikstraDriver:
     def __init__(self,startingX, startingY,endingX,endingY):
         ''' use Area constraints'''
@@ -105,7 +112,7 @@ class djikstraDriver:
     def getPath(self):
         current = self.nodeList[len(nodeList)-1]
         path = []
-        while !(currnet.getXPos() == self.startingX and current.getYPos == self.startingY);
+        while (not(currnet.getXPos() == self.startingX and current.getYPos == self.startingY)):
             path += current
             current = current.getPreceding()
         current = current.getPreceding()
@@ -209,6 +216,8 @@ class djikstraDriver:
 '''
 End of the djikstra driver class
 '''
+
+
 '''
 Global variables
 all colors are stored in BGR values because thats how opencv does it
@@ -217,18 +226,18 @@ checkedSpotColor = (227,245,64)
 endPointColor =(227,0,200)
 returnedShortestPathColor = (255,42,0)
 driver = djikstraDriver(10,10,25,10)
-img=  np.fill((1024,1024,3),255,np.uint8)
-
-
+img=   np.zeros((900,900,3),np.uint8)
+img.fill(255)
+viewedSize = 2
 '''
 Functions
 '''
-    ''' draws all the nodes already checked'''
+''' draws all the nodes already checked'''
 def drawNodeList():
-    if not driver.destinationReached():
+    if not driver.destinationReached:
         list = driver.getNodeList()
         for i in list:
-            cv.rectangle(img,(i.getXpos-1,i.getYPos-1),(cv.getXPos+1, cv.getYPos+1),checkedSpotColor)
+            cv.rectangle(img,(i.getXPos()-viewedSize,i.getYPos()-viewedSize),(i.getXPos()+viewedSize, i.getYPos()+viewedSize),checkedSpotColor)
     else:
         drawPath()
 
@@ -236,7 +245,7 @@ def drawNodeList():
 def drawPath():
     list = driver.getPath()
     for i in list:
-        cv.rectangle(img,(i.getXpos-1,i.getYPos-1),(cv.getXPos+1, cv.getYPos+1),checkedSpotColor)
+        cv.rectangle(img,(i.getXPos()-viewedSize,i.getYPos()-viewedSize),(i.getXPos()viewedSize1, i.getYPos()+viewedSize),checkedSpotColor)
 
 
 '''
@@ -244,12 +253,14 @@ draws the end point
 '''
 def drawEndPoint():
     endingX = driver.getEndXPosition()
-    endingY = driver.geEndYPosition()
-    cv.rectangle(img,(endingX-1,EndingY-1),(endingX+1,endingY+1),endPointColor)
+    endingY = driver.getEndYPosition()
+    cv.rectangle(img,(endingX-1,endingY-1),(endingX+1,endingY+1),endPointColor)
 
 if __name__ == '__main__':
     cv.namedWindow('image')
     drawEndPoint()
     drawNodeList()
+    print(len(img))
+    cv.imshow('image',img)
     while True:
         key = cv.waitKey(20)& 0xFF
