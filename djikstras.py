@@ -32,10 +32,10 @@ class Node:
         its use cases is to put the previous Nodes to
         '''
     def AttachPreceding(self, preceding):
-        self.preceding+= [preceding]
+        self.preceding.append(preceding)
 
     def AttachChildren(self, child):
-        self.children += [child]
+        self.children.append(child)
 
     def getXPos(self):
         return self.xPos
@@ -85,7 +85,7 @@ class djikstraDriver:
         self.nodeList =[Node(self.startingX,self.startingY)]
         self.outerLayerStartingIndex = 0
         self.outerLayerEndingIndex = len(self.nodeList)
-        self.distanceParameter = 5 #is the difference between each node point on top iteration
+        self.distanceParameter = 10 #is the difference between each node point on top iteration
         self.iteration = 0
         self.minObstacleSize = self.distanceParameter+1 # the minimum size of an obbstacle that can be created
 
@@ -110,13 +110,17 @@ class djikstraDriver:
         return self.destinationReached
 
     def getPath(self):
-        current = self.nodeList[len(nodeList)-1]
+        current = self.nodeList[len(self.nodeList)-1]
+        print(current.getXPos())
         path = []
-        while (not(currnet.getXPos() == self.startingX and current.getYPos == self.startingY)):
-            path += current
-            current = current.getPreceding()
-        current = current.getPreceding()
-        path+=current
+        while not(current.getXPos() == self.startingX and current.getYPos() == self.startingY):
+            path.append(current)
+            try:
+                current = current.getPreceding()[0]
+            except Exception:
+                break
+        path.append(current)
+        print(path)
         return path
 
 
@@ -185,7 +189,7 @@ class djikstraDriver:
             if self.isInRange(currXpos,currYpos):
                 self.nodeList+=[Node(self.endingX,self.endingY)]
                 self.nodeList[len(self.nodeList)-1].AttachPreceding(self.nodeList[i])
-                self.nodeList[i].attachChildren(self.nodeList[len(self.nodeList)-1])
+                self.nodeList[i].AttachChildren(self.nodeList[len(self.nodeList)-1])
                 self.destinationReached = True
                 break
 
@@ -212,6 +216,10 @@ class djikstraDriver:
         self.iteration+=1
         return False
 
+    def iterate(self):
+        if self.destinationReached:
+            self.nextIteration()
+
 
 '''
 End of the djikstra driver class
@@ -225,7 +233,7 @@ all colors are stored in BGR values because thats how opencv does it
 checkedSpotColor = (227,245,64)
 endPointColor =(227,0,200)
 returnedShortestPathColor = (255,42,0)
-driver = djikstraDriver(10,10,25,10)
+driver = djikstraDriver(500,500,700,700)
 img=   np.zeros((900,900,3),np.uint8)
 img.fill(255)
 viewedSize = 2
@@ -237,7 +245,8 @@ def drawNodeList():
     if not driver.destinationReached:
         list = driver.getNodeList()
         for i in list:
-            cv.rectangle(img,(i.getXPos()-viewedSize,i.getYPos()-viewedSize),(i.getXPos()+viewedSize, i.getYPos()+viewedSize),checkedSpotColor)
+            print(str(i.getXPos())+" "+str(i.getYPos()))
+            cv.rectangle(img,(i.getXPos()-viewedSize,i.getYPos()-viewedSize),(i.getXPos()+viewedSize, i.getYPos()+viewedSize),checkedSpotColor,-1)
     else:
         drawPath()
 
@@ -245,7 +254,7 @@ def drawNodeList():
 def drawPath():
     list = driver.getPath()
     for i in list:
-        cv.rectangle(img,(i.getXPos()-viewedSize,i.getYPos()-viewedSize),(i.getXPos()viewedSize1, i.getYPos()+viewedSize),checkedSpotColor)
+        cv.rectangle(img,(i.getXPos()-viewedSize,i.getYPos()-viewedSize),(i.getXPos()+viewedSize, i.getYPos()+viewedSize),returnedShortestPathColor,-1)
 
 
 '''
@@ -254,7 +263,7 @@ draws the end point
 def drawEndPoint():
     endingX = driver.getEndXPosition()
     endingY = driver.getEndYPosition()
-    cv.rectangle(img,(endingX-1,endingY-1),(endingX+1,endingY+1),endPointColor)
+    cv.rectangle(img,(endingX-viewedSize,endingY-viewedSize),(endingX+viewedSize,endingY+viewedSize),endPointColor,-1)
 
 if __name__ == '__main__':
     cv.namedWindow('image')
@@ -263,4 +272,8 @@ if __name__ == '__main__':
     print(len(img))
     cv.imshow('image',img)
     while True:
-        key = cv.waitKey(20)& 0xFF
+        key = cv.waitKey(200)& 0xFF
+        driver.nextIteration()
+        drawNodeList()
+        print("fin")
+        cv.imshow('image',img)
