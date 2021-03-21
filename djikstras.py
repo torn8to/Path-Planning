@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import time
+import random
 import cv2 as cv
 
 
@@ -14,7 +16,8 @@ class Obstacles:
         self.radius = radius
 
     def inObject(self, xCoor, yCoor):
-        pass
+        self.xCoordinate 
+
 
 '''
 Node calss stores positional data and carries an assortment of methods both unnecsary and wack
@@ -49,14 +52,7 @@ class Node:
     def getChildren(self):
         return self.children
 
-    def printPreceding(self):
-        print(self.preceding)
 
-    def printInfo(self):
-        print(self)
-        print("(x,y):(" + str(self.xPos)+","+ str(self.yPos)+")")
-        print("Preceding:"+ str(self.preceding))
-        print("Children:"+ str(self.children))
 
 '''
 end of the Node class
@@ -93,7 +89,6 @@ class djikstraDriver:
     def setStartingX(self,x):
         self.startingX = x
 
-
     def setStartingY(self,y):
         self.startingY = y
 
@@ -124,15 +119,20 @@ class djikstraDriver:
         return path
 
 
+    def generateObstacles(self, numObstacles):
+        random.seed(time.time())
+        for z in numObstacles:
+            x = random.random()%(self.rightXConstraint-self.leftXConstraint)
+            y = random.random()%(self.lowerYConstraint-self.lowerYConstraint)
+            self.radius
 
 
+
+    def withinDistanceOF(distance,firstX,firstY,secondX,secondY):
+        return pow(distance,2)<= pow(firstX-secondX,2)+pow(firstY-secondY)
         '''
         Method header for a future iteration of the project when obstacles are involved
         '''
-    def generateObstacles(self):
-        pass
-
-
     def inBounds(self,xCoordinate,yCoordinate):
         return xCoordinate < self.rightXConstraint and xCoordinate >= self.leftXConstraint and yCoordinate >= self.topYConstraint and yCoordinate < self.bottomYConstraint
 
